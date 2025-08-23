@@ -1,4 +1,4 @@
-[README (2).md](https://github.com/user-attachments/files/21952258/README.2.md)
+
 # 🌊 ProjectPool
 
 A collaborative platform to manage and explore projects.  
