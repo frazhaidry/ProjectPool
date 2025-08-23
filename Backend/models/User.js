@@ -18,8 +18,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+     role: {
+        type: String,
+        enum: ["admin", "student" , "faculty"], // 👈 allowed roles
+        default: "student" // 👈 default role if not provided
     }
-});
+}, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
 
