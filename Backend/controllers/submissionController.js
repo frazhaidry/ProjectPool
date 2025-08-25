@@ -37,7 +37,7 @@ const createSubmission = async (req, res) => {
       return res.status(400).json({ message: "You already submitted a project" });
     }
 
-    const submission = new Submission({
+    let submission = new Submission({
       projectTitle: project.title,
       projectId,
       projectDescription: project.description,
@@ -48,7 +48,9 @@ const createSubmission = async (req, res) => {
     });
 
     await submission.save();
-    res.status(201).json({ message: "Submission created successfully", submission: submission });
+
+    submission = await submission.populate("submittedBy", "name email");
+    res.status(201).json({ message: "Submission created successfully", submission });
   } catch (error) {
     console.error("Error creating submission:", error);
     res.status(500).json({ message: "Server Error" });
@@ -73,13 +75,15 @@ const getMySubmissions = async (req, res) => {
 // @access Admin
 const getAllSubmissions = async (req, res) => {
   try {
-    const submissions = await Submission.find().populate("submittedBy", "name email");
-    res.json(submissions);
+    const submissions = await Submission.find()
+     .populate("submittedBy", "firstName lastName emailId");
+    res.status(200).json({ submissions });
   } catch (error) {
     console.error("Error fetching all submissions:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 // @desc   Update submission status (Approve / Reject)
 // @route  PUT /api/submissions/:id/status
