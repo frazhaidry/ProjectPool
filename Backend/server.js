@@ -4,6 +4,7 @@ const express = require("express");
 
 const authRouter = require("./routes/auth");
 const submissionRouter = require("./routes/SubmissionRoute");
+const projectRoutes = require("./routes/ProjectRotes");
 const cookieParser = require("cookie-parser");
 const app = express();
 const cors = require("cors");
@@ -43,7 +44,8 @@ app.use(limiter);
 
 // Routes
 app.use("/api/auth", authRouter);
-app.use("/api/submissions", submissionRouter);
+app.use("/api/projects", projectRoutes);
+app.use("/api/projects/", submissionRouter);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
