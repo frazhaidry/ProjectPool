@@ -45,11 +45,11 @@ app.use(limiter);
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/projects", projectRoutes);
-app.use("/api/projects/", submissionRouter);
+app.use("/api/submissions", submissionRouter);
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+// app.get("/", (req, res) => {
+//   res.send("API is running...");
+// });
 
 async function startServer() {
   try {

@@ -12,7 +12,7 @@ const admin = require("../middleware/admin");
 const router = express.Router();
 
 // Student Routes
-router.post("/:id/submissions", userAuth, createSubmission);       // Submit project
+router.post("/:id", userAuth, createSubmission);       // Submit project
 router.get("/my", userAuth, getMySubmissions);      // Get my submissions
 
 // Admin Routes
