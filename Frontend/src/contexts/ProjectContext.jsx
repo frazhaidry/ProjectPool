@@ -1,6 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { api } from '../utils/api'
 import toast from 'react-hot-toast'
+import { useAuth } from './AuthContext'
+
+
 
 const ProjectContext = createContext()
 
@@ -13,6 +16,7 @@ export const useProject = () => {
 }
 
 export const ProjectProvider = ({ children }) => {
+  const { isAuthenticated} = useAuth()
   const [projects, setProjects] = useState([])
   const [submissions, setSubmissions] = useState([])
   const [loading, setLoading] = useState(false)
@@ -102,9 +106,11 @@ export const ProjectProvider = ({ children }) => {
   }, [])
 
   // ✅ Auto-load projects once on mount
-  useEffect(() => {
+ useEffect(() => {
+  if (isAuthenticated) {
     fetchProjects()
-  }, [fetchProjects])
+  }
+}, [isAuthenticated, fetchProjects])
 
   const value = {
     projects,

@@ -19,14 +19,13 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-  (response) => {
-    return response
-  },
+  (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      window.location.href = '/login'
+      // don’t auto-redirect
+      // just mark auth as false in context
     }
     return Promise.reject(error)
   }
 )
+export default api

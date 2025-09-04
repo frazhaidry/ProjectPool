@@ -16,12 +16,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // ✅ define function BEFORE useEffect
   const checkAuthStatus = async () => {
     try {
-      const response = await api.get('/submissions/my')
-      setUser(response.data.user || response.data)
-    } catch (error) {
+      const res = await api.get("/auth/me")
+      console.log("User data fetched successfully:", res.data.user)
+      setUser(res.data.user) // will be null if unauthorized
+    } catch {
       setUser(null)
     } finally {
       setLoading(false)
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuthStatus()
-  }, []) // ✅ only once
+  }, [])
 
   const login = async (emailId, password) => {
     try {
@@ -84,4 +84,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   )
 }
-
