@@ -87,6 +87,13 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
+// backend
+authRouter.get('/me', (req, res) => {
+  if (!req.user) return res.status(401).json({ user: null });
+  res.json({ user: req.user });
+});
+
+
 authRouter.post("/logout", (req, res) => {
   res.cookie("token", null, {
     expires: new Date(Date.now()),

@@ -30,15 +30,17 @@ app.use(express.urlencoded({ extended: true }));
 // Global rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 1000, // limit each IP to 100 requests per windowMs
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   handler: (req, res) => {
+    res.set('Retry-After', "60");
     res.status(429).json({
       error: 'Too many requests. Please wait before trying again.',
       status: 429
     });
-  }
+  },
+  skip: (req) => req.path.startsWith('/api/auth') || req.method === 'OPTIONS'
 });
 app.use(limiter);
 
