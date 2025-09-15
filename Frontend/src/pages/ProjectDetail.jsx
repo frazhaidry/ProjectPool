@@ -89,7 +89,7 @@ const ProjectDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-blue-100 py-8">
       <div className="container mx-auto px-4">
         {/* Back Button */}
         <div className="mb-6">
@@ -170,156 +170,178 @@ const ProjectDetail = () => {
 
           {/* Submission Section */}
           {isAuthenticated ? (
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Ready to Submit This Project?
-                </h2>
-                <p className="text-gray-600">
-                  Fill out the form below with your team details to submit this project.
-                </p>
-              </div>
+  <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl mx-auto">
+    <div className="text-center mb-10">
+      <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
+        Ready to Submit This Project?
+      </h2>
+      <p className="text-gray-600 text-lg max-w-xl mx-auto">
+        Fill out the form below with your team details to submit this project.
+      </p>
+    </div>
 
-              {!showSubmissionForm ? (
-                <div className="text-center">
-                  <button
-                    onClick={() => setShowSubmissionForm(true)}
-                    className="btn btn-primary text-lg px-8 py-3"
-                  >
-                    <UserPlus className="h-5 w-5" />
-                    Submit Project
-                  </button>
+    {!showSubmissionForm ? (
+      <div className="text-center">
+        <button
+          onClick={() => setShowSubmissionForm(true)}
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-10 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+        >
+          <UserPlus className="h-6 w-6" />
+          Submit Project
+        </button>
+      </div>
+    ) : (
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col">
+            <label className="mb-2 font-semibold text-gray-700" htmlFor="teamLeadPhone">
+              Team Lead Phone Number
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Phone className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                id="teamLeadPhone"
+                {...register('teamLeadPhone', {
+                  required: 'Phone number is required',
+                  pattern: {
+                    value: /^[0-9+\-\s()]+$/,
+                    message: 'Please enter a valid phone number',
+                  },
+                })}
+                type="tel"
+                className={`w-full rounded-md border border-gray-300 px-4 pl-10 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.teamLeadPhone ? 'border-red-500' : ''
+                }`}
+                placeholder="Enter phone number"
+              />
+            </div>
+            {errors.teamLeadPhone && (
+              <p className="text-sm text-red-600 mt-1">{errors.teamLeadPhone.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-3 block font-semibold text-gray-700">
+            Team Members
+          </label>
+          <p className="text-sm text-gray-500 mb-6 max-w-md">
+            Add at least one team member (including yourself)
+          </p>
+
+          <div className="space-y-6">
+            {[0, 1, 2, 3, 4].map((index) => (
+              <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <input
+                    {...register(`members.${index}.name`, {
+                      required: index === 0 ? 'Team lead name is required' : false,
+                    })}
+                    type="text"
+                    placeholder="Full Name"
+                    className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.members?.[index]?.name ? 'border-red-500' : ''
+                    }`}
+                  />
+                  {errors.members?.[index]?.name && (
+                    <p className="text-xs text-red-600 mt-1">{errors.members[index].name.message}</p>
+                  )}
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="form-group">
-                      <label className="form-label">Team Lead Phone Number</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Phone className="h-5 w-5 text-gray-400" />
-                        </div>
-                        <input
-                          {...register('teamLeadPhone', {
-                            required: 'Phone number is required',
-                            pattern: {
-                              value: /^[0-9+\-\s()]+$/,
-                              message: 'Please enter a valid phone number'
-                            }
-                          })}
-                          type="tel"
-                          className="form-input pl-10"
-                          placeholder="Enter phone number"
-                        />
-                      </div>
-                      {errors.teamLeadPhone && (
-                        <p className="form-error">{errors.teamLeadPhone.message}</p>
-                      )}
-                    </div>
-                  </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Team Members</label>
-                    <p className="text-sm text-gray-500 mb-4">
-                      Add at least one team member (including yourself)
-                    </p>
-                    
-                    <div className="space-y-4">
-                      {[0, 1, 2, 3, 4].map((index) => (
-                        <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <input
-                              {...register(`members.${index}.name`, {
-                                required: index === 0 ? 'Team lead name is required' : false
-                              })}
-                              type="text"
-                              className="form-input"
-                              placeholder="Full Name"
-                            />
-                            {errors.members?.[index]?.name && (
-                              <p className="form-error">{errors.members[index].name.message}</p>
-                            )}
-                          </div>
-                          
-                          <div>
-                            <input
-                              {...register(`members.${index}.rollNumber`, {
-                                required: index === 0 ? 'Team lead roll number is required' : false
-                              })}
-                              type="text"
-                              className="form-input"
-                              placeholder="Roll Number"
-                            />
-                            {errors.members?.[index]?.rollNumber && (
-                              <p className="form-error">{errors.members[index].rollNumber.message}</p>
-                            )}
-                          </div>
-                          
-                          <div>
-                            <input
-                              {...register(`members.${index}.enrollNumber`, {
-                                required: index === 0 ? 'Team lead enrollment number is required' : false
-                              })}
-                              type="text"
-                              className="form-input"
-                              placeholder="Enrollment Number"
-                            />
-                            {errors.members?.[index]?.enrollNumber && (
-                              <p className="form-error">{errors.members[index].enrollNumber.message}</p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                <div>
+                  <input
+                    {...register(`members.${index}.rollNumber`, {
+                      required: index === 0 ? 'Team lead roll number is required' : false,
+                    })}
+                    type="text"
+                    placeholder="Roll Number"
+                    className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.members?.[index]?.rollNumber ? 'border-red-500' : ''
+                    }`}
+                  />
+                  {errors.members?.[index]?.rollNumber && (
+                    <p className="text-xs text-red-600 mt-1">{errors.members[index].rollNumber.message}</p>
+                  )}
+                </div>
 
-                  <div className="flex justify-end space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowSubmissionForm(false)}
-                      className="btn btn-outline"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="btn btn-primary"
-                    >
-                      {submitting ? (
-                        <div className="flex items-center">
-                          <div className="spinner mr-2"></div>
-                          Submitting...
-                        </div>
-                      ) : (
-                        <>
-                          <CheckCircle className="h-4 w-4" />
-                          Submit Project
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Login Required
-              </h2>
-              <p className="text-gray-600 mb-6">
-                You need to be logged in to submit a project.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/login" className="btn btn-primary">
-                  Login
-                </Link>
-                <Link to="/signup" className="btn btn-outline">
-                  Create Account
-                </Link>
+                <div>
+                  <input
+                    {...register(`members.${index}.enrollNumber`, {
+                      required: index === 0 ? 'Team lead enrollment number is required' : false,
+                    })}
+                    type="text"
+                    placeholder="Enrollment Number"
+                    className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.members?.[index]?.enrollNumber ? 'border-red-500' : ''
+                    }`}
+                  />
+                  {errors.members?.[index]?.enrollNumber && (
+                    <p className="text-xs text-red-600 mt-1">{errors.members[index].enrollNumber.message}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            onClick={() => setShowSubmissionForm(false)}
+            className="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ${
+              submitting ? 'cursor-not-allowed opacity-70' : ''
+            }`}
+          >
+            {submitting ? (
+              <>
+                <div className="spinner-border animate-spin inline-block w-5 h-5 border-4 border-white border-t-transparent rounded-full"></div>
+                Submitting...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-5 w-5" />
+                Submit Project
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    )}
+  </div>
+) : (
+  <div className="bg-white rounded-xl shadow-lg p-10 max-w-md mx-auto text-center">
+    <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+      Login Required
+    </h2>
+    <p className="text-gray-600 mb-8">
+      You need to be logged in to submit a project.
+    </p>
+    <div className="flex flex-col sm:flex-row gap-6 justify-center">
+      <Link
+        to="/login"
+        className="inline-block px-8 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+      >
+        Login
+      </Link>
+      <Link
+        to="/signup"
+        className="inline-block px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+      >
+        Create Account
+      </Link>
+    </div>
+  </div>
+)}
+
         </div>
       </div>
     </div>

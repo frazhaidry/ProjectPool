@@ -319,14 +319,14 @@ const AdminDashboard = () => {
                     <div className="flex justify-end space-x-4 pt-4 border-t">
                       <button
                         onClick={() => handleStatusUpdate(submission._id, 'Rejected')}
-                        className="btn btn-danger"
+                        className="btn btn-danger p-2 m-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-1 "
                       >
                         <XCircle className="h-4 w-4" />
                         Reject
                       </button>
                       <button
                         onClick={() => handleStatusUpdate(submission._id, 'Approved')}
-                        className="btn btn-success"
+                        className="btn btn-success p-2 m-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1 "
                       >
                         <CheckCircle className="h-4 w-4" />
                         Approve

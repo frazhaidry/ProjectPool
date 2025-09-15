@@ -11,10 +11,13 @@ import {
   Phone,
   Calendar
 } from 'lucide-react'
+// import { useAuth } from '../contexts/AuthContext'
 
 const MySubmissions = () => {
   const { submissions, fetchMySubmissions, loading } = useProject()
   const [localSubmissions, setLocalSubmissions] = useState([])
+//   const { isAdmin } = useAuth()
+//  console.log(isAdmin)
 
   useEffect(() => {
     fetchMySubmissions()
@@ -69,31 +72,45 @@ const MySubmissions = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-blue-100 py-8">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
+       
+          <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             My Submissions
           </h1>
           <p className="text-gray-600">
             Track the status of your project submissions and team details.
           </p>
-        </div>
+         </div>
+        
 
         {localSubmissions.length === 0 ? (
-          <div className="text-center py-12">
-            <FolderOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No Submissions Yet
-            </h3>
-            <p className="text-gray-600 mb-6">
-              You haven't submitted any projects yet. Browse our available projects to get started.
-            </p>
-            <Link to="/projects" className="btn btn-primary">
-              Browse Projects
-            </Link>
-          </div>
+         <div className="text-center py-16 px-6 bg-white rounded-lg shadow-sm border border-gray-200">
+  {/* Icon Container */}
+  <div className="mx-auto mb-6 flex items-center justify-center h-20 w-20 rounded-full bg-blue-50">
+    <FolderOpen className="h-10 w-10 text-blue-600" />
+  </div>
+
+  {/* Heading */}
+  <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+    No Submissions Yet
+  </h3>
+
+  {/* Description */}
+  <p className="text-gray-500 max-w-md mx-auto mb-6">
+    You haven't submitted any projects yet. Start exploring our project listings and find one that excites you.
+  </p>
+
+  {/* CTA Button */}
+  <Link
+    to="/projects"
+    className="inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow transition"
+  >
+    Browse Projects
+  </Link>
+</div>
+
         ) : (
           <div className="space-y-6">
             {localSubmissions.map((submission) => (
@@ -227,12 +244,6 @@ const MySubmissions = () => {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="mt-8 text-center">
-          <Link to="/projects" className="btn btn-primary">
-            Browse More Projects
-          </Link>
-        </div>
       </div>
     </div>
   )

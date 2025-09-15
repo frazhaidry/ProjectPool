@@ -32,221 +32,204 @@ const Signup = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link
-              to="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="form-group">
-                <label htmlFor="firstName" className="form-label">
-                  First Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    {...register('firstName', {
-                      required: 'First name is required',
-                      minLength: {
-                        value: 2,
-                        message: 'First name must be at least 2 characters'
-                      }
-                    })}
-                    type="text"
-                    className="form-input pl-10"
-                    placeholder="First name"
-                  />
-                </div>
-                {errors.firstName && (
-                  <p className="form-error">{errors.firstName.message}</p>
-                )}
-              </div>
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100 px-4 py-12">
+    <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-extrabold text-gray-900">Create your account</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Or{' '}
+          <Link
+            to="/login"
+            className="text-blue-600 hover:text-blue-500 font-medium"
+          >
+            sign in to your existing account
+          </Link>
+        </p>
+      </div>
 
-              <div className="form-group">
-                <label htmlFor="lastName" className="form-label">
-                  Last Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    {...register('lastName', {
-                      required: 'Last name is required',
-                      minLength: {
-                        value: 2,
-                        message: 'Last name must be at least 2 characters'
-                      }
-                    })}
-                    type="text"
-                    className="form-input pl-10"
-                    placeholder="Last name"
-                  />
-                </div>
-                {errors.lastName && (
-                  <p className="form-error">{errors.lastName.message}</p>
-                )}
-              </div>
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+        {/* Name Fields */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* First Name */}
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+              First Name
+            </label>
+            <div className="relative mt-1">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                <User className="h-5 w-5" />
+              </span>
+              <input
+                {...register('firstName', {
+                  required: 'First name is required',
+                  minLength: { value: 2, message: 'Min 2 characters' },
+                })}
+                type="text"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+                placeholder="First name"
+              />
             </div>
-
-            <div className="form-group">
-              <label htmlFor="emailId" className="form-label">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('emailId', {
-                    required: 'Email is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
-                    }
-                  })}
-                  type="email"
-                  className="form-input pl-10"
-                  placeholder="Enter your email"
-                />
-              </div>
-              {errors.emailId && (
-                <p className="form-error">{errors.emailId.message}</p>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('password', {
-                    required: 'Password is required',
-                    minLength: {
-                      value: 8,
-                      message: 'Password must be at least 8 characters'
-                    },
-                    pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-                      message: 'Password must contain uppercase, lowercase, number and special character'
-                    }
-                  })}
-                  type={showPassword ? 'text' : 'password'}
-                  className="form-input pl-10 pr-10"
-                  placeholder="Create a strong password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="form-error">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="confirmPassword" className="form-label">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register('confirmPassword', {
-                    required: 'Please confirm your password',
-                    validate: value => value === password || 'Passwords do not match'
-                  })}
-                  type="password"
-                  className="form-input pl-10"
-                  placeholder="Confirm your password"
-                />
-              </div>
-              {errors.confirmPassword && (
-                <p className="form-error">{errors.confirmPassword.message}</p>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="role" className="form-label">
-                Role
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Shield className="h-5 w-5 text-gray-400" />
-                </div>
-                <select
-                  {...register('role', { required: 'Role is required' })}
-                  className="form-input pl-10"
-                >
-                  <option value="">Select your role</option>
-                  <option value="student">Student</option>
-                  <option value="faculty">Faculty</option>
-                </select>
-              </div>
-              {errors.role && (
-                <p className="form-error">{errors.role.message}</p>
-              )}
-            </div>
+            {errors.firstName && <p className="text-sm text-red-600 mt-1">{errors.firstName.message}</p>}
           </div>
 
+          {/* Last Name */}
           <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+              Last Name
+            </label>
+            <div className="relative mt-1">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                <User className="h-5 w-5" />
+              </span>
+              <input
+                {...register('lastName', {
+                  required: 'Last name is required',
+                  minLength: { value: 2, message: 'Min 2 characters' },
+                })}
+                type="text"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+                placeholder="Last name"
+              />
+            </div>
+            {errors.lastName && <p className="text-sm text-red-600 mt-1">{errors.lastName.message}</p>}
+          </div>
+        </div>
+
+        {/* Email */}
+        <div>
+          <label htmlFor="emailId" className="block text-sm font-medium text-gray-700">
+            Email Address
+          </label>
+          <div className="relative mt-1">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <Mail className="h-5 w-5" />
+            </span>
+            <input
+              {...register('emailId', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Invalid email',
+                },
+              })}
+              type="email"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+              placeholder="you@example.com"
+            />
+          </div>
+          {errors.emailId && <p className="text-sm text-red-600 mt-1">{errors.emailId.message}</p>}
+        </div>
+
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <div className="relative mt-1">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <Lock className="h-5 w-5" />
+            </span>
+            <input
+              {...register('password', {
+                required: 'Password is required',
+                minLength: { value: 8, message: 'Min 8 characters' },
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+                  message: 'Use uppercase, lowercase, number & special character',
+                },
+              })}
+              type={showPassword ? 'text' : 'password'}
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+              placeholder="Create a strong password"
+            />
             <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
             >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="spinner mr-2"></div>
-                  Creating account...
-                </div>
-              ) : (
-                'Create Account'
-              )}
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
+          {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
+        </div>
 
-          <div className="text-center">
-            <Link
-              to="/"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              ← Back to Home
-            </Link>
+        {/* Confirm Password */}
+        <div>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            Confirm Password
+          </label>
+          <div className="relative mt-1">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <Lock className="h-5 w-5" />
+            </span>
+            <input
+              {...register('confirmPassword', {
+                required: 'Please confirm your password',
+                validate: (value) => value === password || 'Passwords do not match',
+              })}
+              type="password"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+              placeholder="Confirm password"
+            />
           </div>
-        </form>
-      </div>
+          {errors.confirmPassword && (
+            <p className="text-sm text-red-600 mt-1">{errors.confirmPassword.message}</p>
+          )}
+        </div>
+
+        {/* Role Select */}
+        <div>
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+            Role
+          </label>
+          <div className="relative mt-1">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <Shield className="h-5 w-5" />
+            </span>
+            <select
+              {...register('role', { required: 'Role is required' })}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+            >
+              <option value="">Select your role</option>
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
+          {errors.role && <p className="text-sm text-red-600 mt-1">{errors.role.message}</p>}
+        </div>
+
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex justify-center items-center py-2 px-4 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 01-8 8z" />
+                </svg>
+                Creating account...
+              </>
+            ) : (
+              'Create Account'
+            )}
+          </button>
+        </div>
+
+        {/* Back to Home */}
+        <div className="text-center pt-2">
+          <Link to="/" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
+            ← Back to Home
+          </Link>
+        </div>
+      </form>
     </div>
-  )
+  </div>
+);
+
 }
 
 export default Signup
