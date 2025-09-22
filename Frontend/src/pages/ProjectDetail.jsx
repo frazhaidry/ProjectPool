@@ -17,7 +17,7 @@ import {
 const ProjectDetail = () => {
   const { id } = useParams()
   const { fetchProject, submitProject } = useProject()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isAdmin } = useAuth()
   const navigate = useNavigate()
   
   const [project, setProject] = useState(null)
@@ -170,7 +170,36 @@ const ProjectDetail = () => {
 
           {/* Submission Section */}
           {isAuthenticated ? (
-  <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl mx-auto">
+            isAdmin ? (
+              /* Admin Message */
+              <div className="bg-white rounded-xl shadow-lg p-10 max-w-md mx-auto text-center">
+                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Users className="h-8 w-8 text-blue-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Admin Access
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  As an admin, you can manage project submissions but cannot submit projects yourself.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Link
+                    to="/admin"
+                    className="inline-block px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+                  >
+                    Go to Admin Dashboard
+                  </Link>
+                  <Link
+                    to="/projects"
+                    className="inline-block px-6 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300 transition"
+                  >
+                    Back to Projects
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              /* Student/Faculty Submission Form */
+              <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl mx-auto">
     <div className="text-center mb-10">
       <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
         Ready to Submit This Project?
@@ -317,7 +346,8 @@ const ProjectDetail = () => {
       </form>
     )}
   </div>
-) : (
+            )
+          ) : (
   <div className="bg-white rounded-xl shadow-lg p-10 max-w-md mx-auto text-center">
     <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
       Login Required

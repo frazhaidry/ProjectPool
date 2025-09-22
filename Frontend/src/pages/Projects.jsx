@@ -2,27 +2,45 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useProject } from '../contexts/ProjectContext'
 import { useAuth } from '../contexts/AuthContext'
-import { FolderOpen, ArrowRight, Clock, Users } from 'lucide-react'
+import { FolderOpen, ArrowRight, Clock, Users, Filter, X } from 'lucide-react'
 
 const Projects = () => {
   const { projects, fetchProjects, loading } = useProject()
   const { isAuthenticated } = useAuth()
-  const [submittedProjects, setSubmittedProjects] = useState(new Set())
+  const [filter, setFilter] = useState('all') // 'all', 'available', 'taken'
+  const [filteredProjects, setFilteredProjects] = useState([])
 
   useEffect(() => {
     fetchProjects()
   }, [])
 
-  const getStatusBadge = (projectId) => {
-    if (submittedProjects.has(projectId)) {
+  // Filter projects based on availability
+  useEffect(() => {
+    if (!projects.length) {
+      setFilteredProjects([])
+      return
+    }
+
+    let filtered = projects
+    if (filter === 'available') {
+      filtered = projects.filter(project => project.isAvailable)
+    } else if (filter === 'taken') {
+      filtered = projects.filter(project => !project.isAvailable)
+    }
+    
+    setFilteredProjects(filtered)
+  }, [projects, filter])
+
+  const getStatusBadge = (project) => {
+    if (!project.isAvailable) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          Submitted
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+          Taken
         </span>
       )
     }
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
         Available
       </span>
     )
@@ -76,56 +94,116 @@ const Projects = () => {
   </p>
 </div>
 
+        {/* Filter Section */}
+        <div className="mb-8 bg-white rounded-lg shadow-md p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-gray-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Filter Projects</h3>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setFilter('all')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filter === 'all'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                All Projects ({projects.length})
+              </button>
+              <button
+                onClick={() => setFilter('available')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filter === 'available'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Available ({projects.filter(p => p.isAvailable).length})
+              </button>
+              <button
+                onClick={() => setFilter('taken')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filter === 'taken'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Taken ({projects.filter(p => !p.isAvailable).length})
+              </button>
+              
+              {filter !== 'all' && (
+                <button
+                  onClick={() => setFilter('all')}
+                  className="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex items-center gap-1"
+                  title="Clear filter"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
 
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-8">
-          {projects.map((project) => (
-            <div key={project.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 ">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="bg-blue-100 p-2 rounded-lg">
-                      <FolderOpen className="h-6 w-6 text-blue-600" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProjects.map((project) => (
+            <div key={project.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 flex flex-col h-full">
+              {/* Card Header */}
+              <div className="p-6 flex-1 flex flex-col">
+                {/* Top Row - Project Info & Status */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3 min-w-0 flex-1">
+                    <div className="bg-blue-50 p-2.5 rounded-lg flex-shrink-0">
+                      <FolderOpen className="h-5 w-5 text-blue-600" />
                     </div>
-                    <span className="text-sm font-medium text-gray-500">
-                      Project #{project.id}
-                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-sm font-medium text-gray-500 block truncate">
+                        Project #{project.id}
+                      </span>
+                    </div>
                   </div>
-                  {getStatusBadge(project.id)}
+                  <div className="flex-shrink-0 ml-3">
+                    {getStatusBadge(project)}
+                  </div>
                 </div>
 
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                {/* Project Title */}
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight min-h-[3.5rem]">
                   {project.title}
                 </h3>
 
-                <p className="text-gray-600 mb-6 line-clamp-3">
+                {/* Project Description */}
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1 mb-6 min-h-[4.5rem]">
                   {project.description}
                 </p>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <Users className="h-4 w-4" />
-                      <span>Team Project</span>
+                {/* Card Footer */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  {/* Project Meta */}
+                  <div className="flex items-center space-x-4 text-xs text-gray-500">
+                    <div className="flex items-center space-x-1.5">
+                      <Users className="h-4 w-4 flex-shrink-0" />
+                      <span className="whitespace-nowrap">Team Project</span>
                     </div>
-                    {/* <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4" />
-                      <span>Ongoing</span>
-                    </div> */}
+                    <div className="flex items-center space-x-1.5">
+                      <Clock className="h-4 w-4 flex-shrink-0" />
+                      <span className="whitespace-nowrap">Active</span>
+                    </div>
                   </div>
 
-                <Link
-                 to={`/projects/${project.id}`}
-                  className="relative inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-md shadow-sm overflow-hidden transition-all duration-300 group"
+                  {/* View Button */}
+                  <Link
+                    to={`/projects/${project.id}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                 <span className="relative z-10">View</span>
-                 <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
-
-                 {/* Shimmer effect on hover */}
-                 <div className="absolute inset-0 z-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
-                </Link>
-
+                    <span>View</span>
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -173,14 +251,17 @@ const Projects = () => {
 
         )}
 
-        {projects.length === 0 && (
+        {filteredProjects.length === 0 && !loading && (
           <div className="text-center py-12">
             <FolderOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No Projects Available
+              {filter === 'all' ? 'No Projects Available' : `No ${filter} Projects`}
             </h3>
             <p className="text-gray-600">
-              Check back later for new project opportunities.
+              {filter === 'all' 
+                ? 'Check back later for new project opportunities.'
+                : `Try changing the filter to see other projects.`
+              }
             </p>
           </div>
         )}

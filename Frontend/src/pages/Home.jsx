@@ -156,12 +156,13 @@
 
 
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { FolderOpen, Users, Award, ArrowRight, Zap, Target, CheckCircle, Sparkles, BookOpen, Clock, TrendingUp } from "lucide-react";
 
 
 const Home = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState({ firstName: "Alex" });
+  const { isAuthenticated, user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [statsCounter, setStatsCounter] = useState({ projects: 0, students: 0, success: 0 });
 
@@ -280,33 +281,30 @@ const Home = () => {
                   Ready to explore amazing projects? 🚀
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className={secondaryBtn}>
+                  <Link to="/projects" className={secondaryBtn}>
                     <span>Browse Projects</span>
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  </button>
-                  <button className={primaryBtn}>
+                  </Link>
+                  <Link to="/my-submissions" className={primaryBtn}>
                     <span>My Dashboard</span>
                     <Target className="h-5 w-5" />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  </button>
+                  </Link>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
-                  className={secondaryBtn}
-                  onClick={() => setIsAuthenticated(true)}
-                >
+                <Link to="/signup" className={secondaryBtn}>
                   <span>Get Started Free</span>
                   <Zap className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-200/30 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                </button>
-                <button className={primaryBtn}>
+                </Link>
+                <Link to="/login" className={primaryBtn}>
                   <span>Sign In</span>
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                </button>
+                </Link>
               </div>
             )}
           </div>
