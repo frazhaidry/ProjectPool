@@ -4,7 +4,7 @@ const {
   getMySubmissions, 
   getAllSubmissions, 
   updateSubmissionStatus 
-} = require("../controllers/SubmissionController");
+} = require("../controllers/submissionController");
 
 const { userAuth } = require("../middleware/auth");
 const admin = require("../middleware/admin");
