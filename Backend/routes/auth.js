@@ -3,6 +3,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const { validateSignUpData } = require("../utils/validation");
+const { userAuth } = require("../middleware/auth");
 const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
 
@@ -88,7 +89,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 // backend
-authRouter.get('/me', (req, res) => {
+authRouter.get('/me', userAuth, (req, res) => {
   if (!req.user) return res.status(401).json({ user: null });
   res.json({ user: req.user });
 });

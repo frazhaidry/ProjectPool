@@ -4,13 +4,18 @@ const projectList = require("../utils/projectList");
  
 // @desc   Create a new submission
 // @route  POST /api/submissions
-// @access Student (Authenticated User)
+// @access Student/Faculty (Authenticated User)
 const createSubmission = async (req, res) => {
   try {
     const { members, teamLeadPhone } = req.body;
 
     const projectId = parseInt(req.params.id, 10); // convert string to number
    
+    // Check if user role is allowed to submit projects
+    if (req.user.role === 'admin') {
+      return res.status(403).json({ message: "Admins cannot submit projects. Only students and faculty can submit projects." });
+    }
+
     if (!members || members.length === 0 || !teamLeadPhone ) {
       return res.status(400).json({ message: "All required fields must be filled" });
     }

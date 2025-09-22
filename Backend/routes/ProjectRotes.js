@@ -2,10 +2,35 @@
 const express = require("express");
 const router = express.Router();
 const projectList = require("../utils/projectList");
+const Submission = require("../models/Submission");
 
-// ✅ Get all projects
-router.get("/", (req, res) => {
-  res.json(projectList);
+// ✅ Get all projects with availability status
+router.get("/", async (req, res) => {
+  try {
+    // Get all submissions to check project availability
+    const submissions = await Submission.find({}, 'projectId status');
+    
+    // Create a map of taken projects
+    const takenProjects = new Map();
+    submissions.forEach(submission => {
+      takenProjects.set(submission.projectId, {
+        status: submission.status,
+        isTaken: true
+      });
+    });
+    
+    // Add availability status to each project
+    const projectsWithStatus = projectList.map(project => ({
+      ...project,
+      isAvailable: !takenProjects.has(project.id),
+      submissionStatus: takenProjects.get(project.id)?.status || null
+    }));
+    
+    res.json(projectsWithStatus);
+  } catch (error) {
+    console.error("Error fetching projects with status:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 // GET /api/projects/:id (project details)
