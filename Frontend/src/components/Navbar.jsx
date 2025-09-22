@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { User, LogOut, Home, FolderOpen, Settings } from "lucide-react";
+import { User, LogOut, Home, FolderOpen, Settings, FileText, Users, Shield, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 const NavItem = ({ to, icon, label }) => (
   <Link
@@ -15,11 +16,42 @@ const NavItem = ({ to, icon, label }) => (
 const Navbar = () => {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     navigate("/");
+    setMobileMenuOpen(false);
   };
+
+  // Get navigation items based on user role
+  const getNavItems = () => {
+    const baseItems = [
+      { to: "/", icon: <Home className="h-4 w-4" />, label: "Home" },
+      { to: "/projects", icon: <FolderOpen className="h-4 w-4" />, label: "Projects" }
+    ];
+
+    if (!isAuthenticated) {
+      return baseItems;
+    }
+
+    // Role-specific navigation
+    if (isAdmin) {
+      return [
+        ...baseItems,
+        { to: "/admin", icon: <Settings className="h-4 w-4" />, label: "Admin Dashboard" },
+        { to: "/admin", icon: <Users className="h-4 w-4" />, label: "Manage Submissions" }
+      ];
+    } else {
+      // For students and faculty
+      return [
+        ...baseItems,
+        { to: "/my-submissions", icon: <FileText className="h-4 w-4" />, label: "My Submissions" }
+      ];
+    }
+  };
+
+  const navItems = getNavItems();
 
   // Reusable button styles
   // const primaryBtn =
@@ -41,24 +73,14 @@ const Navbar = () => {
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center space-x-6 text-gray-950 font-extrabold">
-          <NavItem to="/" icon={<Home className="h-4 w-4" />} label="Home" />
-          <NavItem to="/projects" icon={<FolderOpen className="h-4 w-4" />} label="Projects" />
-
-          {isAuthenticated && (
-            <NavItem
-              to="/my-submissions"
-              icon={<User className="h-4 w-4" />}
-              label="My Submissions"
+          {navItems.map((item, index) => (
+            <NavItem 
+              key={index}
+              to={item.to} 
+              icon={item.icon} 
+              label={item.label} 
             />
-          )}
-
-          {isAdmin && (
-            <NavItem
-              to="/admin"
-              icon={<Settings className="h-4 w-4" />}
-              label="Admin"
-            />
-          )}
+          ))}
         </div>
 
         {/* User Menu */}
@@ -66,15 +88,33 @@ const Navbar = () => {
           {isAuthenticated ? (
             <div className="flex items-center space-x-4">
               {/* User Info */}
-              <div className="flex items-center space-x-2">
-                <div className="h-9 w-9 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-blue-600" />
+              <div className="flex items-center space-x-3">
+                <div className="h-9 w-9 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center ring-2 ring-blue-200">
+                  {isAdmin ? (
+                    <Shield className="h-4 w-4 text-blue-700" />
+                  ) : (
+                    <User className="h-4 w-4 text-blue-600" />
+                  )}
                 </div>
                 <div className="hidden md:block leading-tight">
-                  <p className="text-sm font-medium text-gray-800">
-                    {user?.firstName} {user?.lastName}
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm font-semibold text-gray-800">
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                      isAdmin 
+                        ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                        : user?.role === 'faculty'
+                        ? 'bg-green-100 text-green-700 border border-green-200'
+                        : 'bg-blue-100 text-blue-700 border border-blue-200'
+                    }`}>
+                      {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {isAdmin ? 'System Administrator' : 
+                     user?.role === 'faculty' ? 'Faculty Member' : 'Student'}
                   </p>
-                  <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
                 </div>
               </div>
 
@@ -104,9 +144,80 @@ const Navbar = () => {
               </Link>
             </div>
           )}
+          
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden inline-flex items-center p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
     </div>
+    
+    {/* Mobile Menu */}
+    {mobileMenuOpen && (
+      <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+        <div className="px-4 py-4 space-y-3">
+          {navItems.map((item, index) => (
+            <Link
+              key={index}
+              to={item.to}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+            >
+              {item.icon}
+              <span className="font-medium">{item.label}</span>
+            </Link>
+          ))}
+          
+          {isAuthenticated && (
+            <>
+              <div className="border-t border-gray-200 pt-3 mt-3">
+                <div className="flex items-center space-x-3 px-3 py-2">
+                  <div className="h-8 w-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center ring-2 ring-blue-200">
+                    {isAdmin ? (
+                      <Shield className="h-3 w-3 text-blue-700" />
+                    ) : (
+                      <User className="h-3 w-3 text-blue-600" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <p className="text-sm font-semibold text-gray-800">
+                        {user?.firstName} {user?.lastName}
+                      </p>
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                        isAdmin 
+                          ? 'bg-purple-100 text-purple-700'
+                          : user?.role === 'faculty'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {isAdmin ? 'System Administrator' : 
+                       user?.role === 'faculty' ? 'Faculty Member' : 'Student'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="font-medium">Logout</span>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    )}
   </nav>
 );
 
