@@ -261,7 +261,7 @@ const ProjectDetail = () => {
           </p>
 
           <div className="space-y-6">
-            {[0, 1, 2, 3, 4].map((index) => (
+            {[0, 1, 2].map((index) => (
               <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <input
