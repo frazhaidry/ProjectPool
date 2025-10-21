@@ -1,38 +1,41 @@
 
 # 🌊 ProjectPool
 
-ProjectPool is a platform built to simplify and streamline the final-year project selection process for students and faculty.
+**ProjectPool** is a platform built to simplify and streamline the **final-year project selection process** for students and faculty.
 
 Every student knows the struggle:
 
-❌ Multiple teams fighting for the same project
+- ❌ Multiple teams fighting for the same project  
+- ❌ Endless manual approvals  
+- ❌ Zero clarity on who gets what  
+- ❌ Confusion and wasted time  
 
-❌ Endless manual approvals
+**ProjectPool** eliminates all that by introducing a **fair, transparent, and efficient system** that ensures every project gets assigned without conflict or chaos.
 
-❌ Zero clarity on who gets what
+---
 
-❌ Confusion and wasted time
+## ✨ Version 1 Highlights
 
-ProjectPool eliminates all that by introducing a fair, transparent, and efficient system that ensures every project gets assigned without conflict or chaos.
+- ✅ **Team Formation Made Simple** – Students can easily form teams and select from available projects.  
+- ✅ **Instant Approvals** – Admins can approve or reject project requests in seconds.  
+- ✅ **No Conflicts** – One Team = One Project → ensuring clarity and fairness.  
+- ✅ **Faster Workflow** – Smooth, automated project allocation for everyone involved.  
 
+---
 
-✨ Version 1 Highlights
+## 🌟 What’s Coming in Version 2
 
-✅ Team Formation Made Simple – Students can easily form teams and select from available projects.
-✅ Instant Approvals – Admins can approve or reject project requests in seconds.
-✅ No Conflicts – One Team = One Project → ensuring clarity and fairness.
-✅ Faster Workflow – Smooth, automated project allocation for everyone involved.
+- 💡 **Faculty Project Proposals** – Faculty members can propose up to four projects directly into the pool.  
+- 💡 **Faculty Directory** – A complete list of department faculty available within the platform.  
+- 💡 **Group Change Requests** – Students can request group changes with approval from teammates and supervisors.  
+- 💡 **New Roles** – Introducing a dedicated *Faculty* role alongside *Admin* and *Student*.  
 
-🌟 What’s Coming in Version 2
+---
 
-💡 Faculty Project Proposals – Faculty members can propose up to four projects directly into the pool.
-💡 Faculty Directory – A complete list of department faculty available within the platform.
-💡 Group Change Requests – Students can request group changes with approval from teammates and supervisors.
-💡 New Roles – Introducing a dedicated Faculty role alongside Admin and Student.
+## 🎯 Our Goal
 
-🎯 Our Goal
+To bring **clarity, fairness, and transparency** to the final-year project selection process — saving time, reducing confusion, and giving both students and faculty a smarter way to manage projects.
 
-To bring clarity, fairness, and transparency to the final-year project selection process — saving time, reducing confusion, and giving both students and faculty a smarter way to manage projects.
 ---
 
 ## 📌 Features
