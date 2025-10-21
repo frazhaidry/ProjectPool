@@ -15,6 +15,24 @@ Every student knows the struggle:
 
 ProjectPool eliminates all that by introducing a fair, transparent, and efficient system that ensures every project gets assigned without conflict or chaos.
 
+
+✨ Version 1 Highlights
+
+✅ Team Formation Made Simple – Students can easily form teams and select from available projects.
+✅ Instant Approvals – Admins can approve or reject project requests in seconds.
+✅ No Conflicts – One Team = One Project → ensuring clarity and fairness.
+✅ Faster Workflow – Smooth, automated project allocation for everyone involved.
+
+🌟 What’s Coming in Version 2
+
+💡 Faculty Project Proposals – Faculty members can propose up to four projects directly into the pool.
+💡 Faculty Directory – A complete list of department faculty available within the platform.
+💡 Group Change Requests – Students can request group changes with approval from teammates and supervisors.
+💡 New Roles – Introducing a dedicated Faculty role alongside Admin and Student.
+
+🎯 Our Goal
+
+To bring clarity, fairness, and transparency to the final-year project selection process — saving time, reducing confusion, and giving both students and faculty a smarter way to manage projects.
 ---
 
 ## 📌 Features
