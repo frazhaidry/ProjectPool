@@ -1,8 +1,19 @@
 
 # 🌊 ProjectPool
 
-A collaborative platform to manage and explore projects.  
-This repository contains the backend implementation of **ProjectPool** — handling authentication, submissions, routes, and database connections.
+ProjectPool is a platform built to simplify and streamline the final-year project selection process for students and faculty.
+
+Every student knows the struggle:
+
+❌ Multiple teams fighting for the same project
+
+❌ Endless manual approvals
+
+❌ Zero clarity on who gets what
+
+❌ Confusion and wasted time
+
+ProjectPool eliminates all that by introducing a fair, transparent, and efficient system that ensures every project gets assigned without conflict or chaos.
 
 ---
 
