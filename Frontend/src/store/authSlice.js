@@ -1,11 +1,10 @@
-// src/store/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { api } from '../utils/api'
 import toast from 'react-hot-toast'
 
 export const checkAuthStatus = createAsyncThunk('auth/checkAuthStatus', async (_, thunkAPI) => {
   try {
-    const res = await api.get('/auth/me')
+    const res = await api.get('/auth/me') // {withCredentials: true} is inherited from api.js
     return res.data.user
   } catch {
     return null
@@ -14,6 +13,7 @@ export const checkAuthStatus = createAsyncThunk('auth/checkAuthStatus', async (_
 
 export const login = createAsyncThunk('auth/login', async ({ emailId, password }, thunkAPI) => {
   try {
+    // Explicit withCredentials set by api.js, so not required here
     const response = await api.post('/auth/login', { emailId, password })
     toast.success('Login successful!')
     return response.data
