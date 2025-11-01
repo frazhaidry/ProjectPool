@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useProject } from '../contexts/ProjectContext'
+import { useSelector, useDispatch } from 'react-redux'
 import { 
   Users, 
   FolderOpen, 
@@ -12,8 +12,13 @@ import {
   Filter
 } from 'lucide-react'
 
+import { fetchAllSubmissions, updateSubmissionStatus } from '../store/projectSlice'
+
 const AdminDashboard = () => {
-  const { submissions, fetchAllSubmissions, updateSubmissionStatus, loading } = useProject()
+  const dispatch = useDispatch()
+  const submissions = useSelector((state) => state.project.submissions)
+  const loading = useSelector((state) => state.project.loading)
+
   const [localSubmissions, setLocalSubmissions] = useState([])
   const [filter, setFilter] = useState('all')
   const [stats, setStats] = useState({
@@ -24,8 +29,8 @@ const AdminDashboard = () => {
   })
 
   useEffect(() => {
-    fetchAllSubmissions()
-  }, [])
+    dispatch(fetchAllSubmissions())
+  }, [dispatch])
 
   useEffect(() => {
     setLocalSubmissions(submissions)
@@ -49,7 +54,7 @@ const AdminDashboard = () => {
 
   const handleStatusUpdate = async (submissionId, newStatus) => {
     try {
-      await updateSubmissionStatus(submissionId, newStatus)
+      await dispatch(updateSubmissionStatus({ submissionId, status: newStatus })).unwrap()
       // Update local state
       setLocalSubmissions(prev => 
         prev.map(sub => 
