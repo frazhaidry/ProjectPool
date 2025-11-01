@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useProject } from '../contexts/ProjectContext'
-import { useAuth } from '../contexts/AuthContext'
+import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { 
   ArrowLeft, 
@@ -14,28 +13,27 @@ import {
   User
 } from 'lucide-react'
 
+import { fetchProject, submitProject } from '../store/projectSlice'
+
 const ProjectDetail = () => {
   const { id } = useParams()
-  const { fetchProject, submitProject } = useProject()
-  const { isAuthenticated, isAdmin } = useAuth()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
-  
+  const { register, handleSubmit, formState: { errors }, reset } = useForm()
+
+  const user = useSelector((state) => state.auth.user)
+  const isAuthenticated = !!user
+  const isAdmin = user?.role === 'admin'
+
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm()
-
   useEffect(() => {
     const loadProject = async () => {
       try {
-        const projectData = await fetchProject(id)
+        const projectData = await dispatch(fetchProject(id)).unwrap()
         setProject(projectData)
       } catch (error) {
         console.error('Error loading project:', error)
@@ -45,7 +43,7 @@ const ProjectDetail = () => {
     }
 
     loadProject()
-  }, [id])
+  }, [dispatch, id])
 
   const onSubmit = async (data) => {
     if (!isAuthenticated) {
@@ -55,7 +53,7 @@ const ProjectDetail = () => {
 
     setSubmitting(true)
     try {
-      await submitProject(id, data)
+      await dispatch(submitProject({ projectId: id, submissionData: data })).unwrap()
       setShowSubmissionForm(false)
       reset()
       navigate('/my-submissions')
@@ -200,178 +198,177 @@ const ProjectDetail = () => {
             ) : (
               /* Student/Faculty Submission Form */
               <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl mx-auto">
-    <div className="text-center mb-10">
-      <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
-        Ready to Submit This Project?
-      </h2>
-      <p className="text-gray-600 text-lg max-w-xl mx-auto">
-        Fill out the form below with your team details to submit this project.
-      </p>
-    </div>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
+                    Ready to Submit This Project?
+                  </h2>
+                  <p className="text-gray-600 text-lg max-w-xl mx-auto">
+                    Fill out the form below with your team details to submit this project.
+                  </p>
+                </div>
 
-    {!showSubmissionForm ? (
-      <div className="text-center">
-        <button
-          onClick={() => setShowSubmissionForm(true)}
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-10 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
-        >
-          <UserPlus className="h-6 w-6" />
-          Submit Project
-        </button>
-      </div>
-    ) : (
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col">
-            <label className="mb-2 font-semibold text-gray-700" htmlFor="teamLeadPhone">
-              Team Lead Phone Number
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Phone className="h-5 w-5 text-gray-400" />
+                {!showSubmissionForm ? (
+                  <div className="text-center">
+                    <button
+                      onClick={() => setShowSubmissionForm(true)}
+                      className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-10 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+                    >
+                      <UserPlus className="h-6 w-6" />
+                      Submit Project
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex flex-col">
+                        <label className="mb-2 font-semibold text-gray-700" htmlFor="teamLeadPhone">
+                          Team Lead Phone Number
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Phone className="h-5 w-5 text-gray-400" />
+                          </div>
+                          <input
+                            id="teamLeadPhone"
+                            {...register('teamLeadPhone', {
+                              required: 'Phone number is required',
+                              pattern: {
+                                value: /^[0-9+\-\s()]+$/,
+                                message: 'Please enter a valid phone number',
+                              },
+                            })}
+                            type="tel"
+                            className={`w-full rounded-md border border-gray-300 px-4 pl-10 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                              errors.teamLeadPhone ? 'border-red-500' : ''
+                            }`}
+                            placeholder="Enter phone number"
+                          />
+                        </div>
+                        {errors.teamLeadPhone && (
+                          <p className="text-sm text-red-600 mt-1">{errors.teamLeadPhone.message}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-3 block font-semibold text-gray-700">
+                        Team Members
+                      </label>
+                      <p className="text-sm text-gray-500 mb-6 max-w-md">
+                        Add at least one team member (including yourself)
+                      </p>
+
+                      <div className="space-y-6">
+                        {[0, 1, 2].map((index) => (
+                          <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                              <input
+                                {...register(`members.${index}.name`, {
+                                  required: index === 0 ? 'Team lead name is required' : false,
+                                })}
+                                type="text"
+                                placeholder="Full Name"
+                                className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                  errors.members?.[index]?.name ? 'border-red-500' : ''
+                                }`}
+                              />
+                              {errors.members?.[index]?.name && (
+                                <p className="text-xs text-red-600 mt-1">{errors.members[index].name.message}</p>
+                              )}
+                            </div>
+
+                            <div>
+                              <input
+                                {...register(`members.${index}.rollNumber`, {
+                                  required: index === 0 ? 'Team lead roll number is required' : false,
+                                })}
+                                type="text"
+                                placeholder="Roll Number"
+                                className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                  errors.members?.[index]?.rollNumber ? 'border-red-500' : ''
+                                }`}
+                              />
+                              {errors.members?.[index]?.rollNumber && (
+                                <p className="text-xs text-red-600 mt-1">{errors.members[index].rollNumber.message}</p>
+                              )}
+                            </div>
+
+                            <div>
+                              <input
+                                {...register(`members.${index}.enrollNumber`, {
+                                  required: index === 0 ? 'Team lead enrollment number is required' : false,
+                                })}
+                                type="text"
+                                placeholder="Enrollment Number"
+                                className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                  errors.members?.[index]?.enrollNumber ? 'border-red-500' : ''
+                                }`}
+                              />
+                              {errors.members?.[index]?.enrollNumber && (
+                                <p className="text-xs text-red-600 mt-1">{errors.members[index].enrollNumber.message}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowSubmissionForm(false)}
+                        className="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ${
+                          submitting ? 'cursor-not-allowed opacity-70' : ''
+                        }`}
+                      >
+                        {submitting ? (
+                          <>
+                            <div className="spinner-border animate-spin inline-block w-5 h-5 border-4 border-white border-t-transparent rounded-full"></div>
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-5 w-5" />
+                            Submit Project
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
-              <input
-                id="teamLeadPhone"
-                {...register('teamLeadPhone', {
-                  required: 'Phone number is required',
-                  pattern: {
-                    value: /^[0-9+\-\s()]+$/,
-                    message: 'Please enter a valid phone number',
-                  },
-                })}
-                type="tel"
-                className={`w-full rounded-md border border-gray-300 px-4 pl-10 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.teamLeadPhone ? 'border-red-500' : ''
-                }`}
-                placeholder="Enter phone number"
-              />
-            </div>
-            {errors.teamLeadPhone && (
-              <p className="text-sm text-red-600 mt-1">{errors.teamLeadPhone.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="mb-3 block font-semibold text-gray-700">
-            Team Members
-          </label>
-          <p className="text-sm text-gray-500 mb-6 max-w-md">
-            Add at least one team member (including yourself)
-          </p>
-
-          <div className="space-y-6">
-            {[0, 1, 2].map((index) => (
-              <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <input
-                    {...register(`members.${index}.name`, {
-                      required: index === 0 ? 'Team lead name is required' : false,
-                    })}
-                    type="text"
-                    placeholder="Full Name"
-                    className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.members?.[index]?.name ? 'border-red-500' : ''
-                    }`}
-                  />
-                  {errors.members?.[index]?.name && (
-                    <p className="text-xs text-red-600 mt-1">{errors.members[index].name.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <input
-                    {...register(`members.${index}.rollNumber`, {
-                      required: index === 0 ? 'Team lead roll number is required' : false,
-                    })}
-                    type="text"
-                    placeholder="Roll Number"
-                    className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.members?.[index]?.rollNumber ? 'border-red-500' : ''
-                    }`}
-                  />
-                  {errors.members?.[index]?.rollNumber && (
-                    <p className="text-xs text-red-600 mt-1">{errors.members[index].rollNumber.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <input
-                    {...register(`members.${index}.enrollNumber`, {
-                      required: index === 0 ? 'Team lead enrollment number is required' : false,
-                    })}
-                    type="text"
-                    placeholder="Enrollment Number"
-                    className={`w-full rounded-md border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.members?.[index]?.enrollNumber ? 'border-red-500' : ''
-                    }`}
-                  />
-                  {errors.members?.[index]?.enrollNumber && (
-                    <p className="text-xs text-red-600 mt-1">{errors.members[index].enrollNumber.message}</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => setShowSubmissionForm(false)}
-            className="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ${
-              submitting ? 'cursor-not-allowed opacity-70' : ''
-            }`}
-          >
-            {submitting ? (
-              <>
-                <div className="spinner-border animate-spin inline-block w-5 h-5 border-4 border-white border-t-transparent rounded-full"></div>
-                Submitting...
-              </>
-            ) : (
-              <>
-                <CheckCircle className="h-5 w-5" />
-                Submit Project
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-    )}
-  </div>
             )
           ) : (
-  <div className="bg-white rounded-xl shadow-lg p-10 max-w-md mx-auto text-center">
-    <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
-      Login Required
-    </h2>
-    <p className="text-gray-600 mb-8">
-      You need to be logged in to submit a project.
-    </p>
-    <div className="flex flex-col sm:flex-row gap-6 justify-center">
-      <Link
-        to="/login"
-        className="inline-block px-8 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
-      >
-        Login
-      </Link>
-      <Link
-        to="/signup"
-        className="inline-block px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
-      >
-        Create Account
-      </Link>
-    </div>
-  </div>
-)}
-
+            <div className="bg-white rounded-xl shadow-lg p-10 max-w-md mx-auto text-center">
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+                Login Required
+              </h2>
+              <p className="text-gray-600 mb-8">
+                You need to be logged in to submit a project.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <Link
+                  to="/login"
+                  className="inline-block px-8 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="inline-block px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300 transition"
+                >
+                  Create Account
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
