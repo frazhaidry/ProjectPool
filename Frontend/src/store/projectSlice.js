@@ -1,7 +1,8 @@
-// src/store/projectSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSelector } from 'reselect'  // Import reselect
 import { api } from '../utils/api'
 import toast from 'react-hot-toast'
+
 
 export const fetchProjects = createAsyncThunk('project/fetchProjects', async () => {
   try {
@@ -13,6 +14,7 @@ export const fetchProjects = createAsyncThunk('project/fetchProjects', async () 
   }
 })
 
+
 export const fetchProject = createAsyncThunk('project/fetchProject', async (id) => {
   try {
     const response = await api.get(`/projects/${id}`)
@@ -22,6 +24,7 @@ export const fetchProject = createAsyncThunk('project/fetchProject', async (id) 
     throw error
   }
 })
+
 
 export const submitProject = createAsyncThunk('project/submitProject', async ({ projectId, submissionData }) => {
   try {
@@ -35,6 +38,7 @@ export const submitProject = createAsyncThunk('project/submitProject', async ({ 
   }
 })
 
+
 export const fetchMySubmissions = createAsyncThunk('project/fetchMySubmissions', async () => {
   try {
     const response = await api.get('/submissions/my')
@@ -45,6 +49,7 @@ export const fetchMySubmissions = createAsyncThunk('project/fetchMySubmissions',
   }
 })
 
+
 export const fetchAllSubmissions = createAsyncThunk('project/fetchAllSubmissions', async () => {
   try {
     const response = await api.get('/submissions')
@@ -54,6 +59,7 @@ export const fetchAllSubmissions = createAsyncThunk('project/fetchAllSubmissions
     throw error
   }
 })
+
 
 export const updateSubmissionStatus = createAsyncThunk('project/updateSubmissionStatus', async ({ submissionId, status }) => {
   try {
@@ -67,11 +73,13 @@ export const updateSubmissionStatus = createAsyncThunk('project/updateSubmission
   }
 })
 
+
 const initialState = {
   projects: [],
   submissions: [],
   loading: false,
 }
+
 
 const projectSlice = createSlice({
   name: 'project',
@@ -85,7 +93,7 @@ const projectSlice = createSlice({
         state.loading = false
       })
       .addCase(fetchProjects.rejected, (state) => { state.loading = false })
-
+    
       .addCase(fetchProject.pending, (state) => { state.loading = true })
       .addCase(fetchProject.fulfilled, (state) => { state.loading = false })
       .addCase(fetchProject.rejected, (state) => { state.loading = false })
@@ -118,6 +126,13 @@ const projectSlice = createSlice({
 })
 
 export default projectSlice.reducer
+
 export const selectProjects = (state) => state.project.projects
-export const selectSubmissions = (state) => state.project.submissions
+
+// Memoized selector using reselect to prevent unnecessary rerenders
+export const selectSubmissions = createSelector(
+  (state) => state.project.submissions,
+  (submissions) => submissions
+)
+
 export const selectProjectLoading = (state) => state.project.loading

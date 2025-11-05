@@ -30,12 +30,11 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50  to-blue-100 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100 px-4 py-12">
       <div className="w-full max-w-md space-y-8 bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
         {/* Header */}
         <div className="text-center">
           <div className="mb-2">
-            {/* Optional Logo */}
             <div className="w-12 h-12 mx-auto bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
               PP
             </div>

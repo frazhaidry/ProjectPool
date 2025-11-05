@@ -13,7 +13,7 @@ import {
   User
 } from 'lucide-react'
 
-import { fetchProject, submitProject } from '../store/projectSlice'
+import { fetchProject, submitProject, fetchMySubmissions } from '../store/projectSlice'
 
 const ProjectDetail = () => {
   const { id } = useParams()
@@ -54,6 +54,7 @@ const ProjectDetail = () => {
     setSubmitting(true)
     try {
       await dispatch(submitProject({ projectId: id, submissionData: data })).unwrap()
+      await dispatch(fetchMySubmissions()) // Refresh submissions after submit
       setShowSubmissionForm(false)
       reset()
       navigate('/my-submissions')
@@ -169,7 +170,6 @@ const ProjectDetail = () => {
           {/* Submission Section */}
           {isAuthenticated ? (
             isAdmin ? (
-              /* Admin Message */
               <div className="bg-white rounded-xl shadow-lg p-10 max-w-md mx-auto text-center">
                 <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Users className="h-8 w-8 text-blue-600" />
@@ -196,7 +196,6 @@ const ProjectDetail = () => {
                 </div>
               </div>
             ) : (
-              /* Student/Faculty Submission Form */
               <div className="bg-white rounded-xl shadow-lg p-10 max-w-4xl mx-auto">
                 <div className="text-center mb-10">
                   <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
