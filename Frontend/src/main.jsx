@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { Provider } from 'react-redux'
-import { PersistGate } from 'redux-persist/es/integration/react';
-import { store, persistor } from './store/store'
+// import { PersistGate } from 'redux-persist/es/integration/react';
+import { store} from './store/store'
 import App from './App.jsx'
 import './index.css'
 
@@ -12,7 +12,7 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Provider store={store}>
-      <PersistGate loading={<div className="spinner" />} persistor={persistor}>
+      {/* <PersistGate loading={<div className="spinner" />} persistor={persistor}> */}
         <App />
         <Toaster
           position="top-right"
@@ -24,7 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             },
           }}
         />
-      </PersistGate>
+      {/* </PersistGate> */}
     </Provider>
   </BrowserRouter>
 )
