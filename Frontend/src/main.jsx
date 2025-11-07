@@ -8,6 +8,7 @@ import { store, persistor } from './store/store'
 import App from './App.jsx'
 import './index.css'
 
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Provider store={store}>
